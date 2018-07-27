@@ -95,7 +95,178 @@ public class BinarySearchTree<T extends HaveKey> {
 		
 		return DeleteOneChild(searchResult);
 	}
+
+	public BinaryNode<T> DeleteWork(T info){
+		System.out.println("dude, seriously?");
+		BinaryNode<T> z= this.Search(info);
+		if(z==null){
+			return null;
+		}
+		BinaryNode<T> y=null;
+		BinaryNode<T> x=null;
+		this.UpdateMedianDelete(z);
+		this.DecrementSize();
+		
+		if(!z.IsLeaf()){
+			y=z;
+		}else{
+			y=z.GetSuccessor();
+		}
+
+		if(y.GetLeft()!=null && y.GetLeft().GetParent()==y){
+			x=y.GetLeft();
+		}else if(y.GetRight()!=null && y.GetRight().GetParent()==y){
+			x=y.GetRight();
+		}else{
+			x=null;
+		}
+
+		if(x!=null){
+			if(y==null){
+				x.SetParent(null);
+			}else{
+				x.SetParent(y.GetParent());
+			}
+		}
+
+		if(y.GetParent()==null){
+			this.Root=x;
+		}else{
+			if(y.IsLeftChild()){
+				y.GetParent().SetLeft(x);
+			}else{
+				y.GetParent().SetRight(x);
+			}
+		}
+
+		if(y!=z){
+			z.SetInfo(y.GetInfo());
+		}
+		return y;
+	}
 	
+	// Deletes a key from threaded BST with given root and
+// returns new root of BST.
+
+
+public BinaryNode<T> DeleteAmen(T info)
+{
+	BinaryNode<T> ptr= this.Search(info);
+
+	if(ptr==null){
+		return null;
+	}
+
+	if(ptr.IsMinimumLeaf()){
+
+	}
+	// Initialize parent as NULL and ptrent
+    // Node as root.
+    
+    
+    // Two Children
+	if ((ptr.IsParentOfLeft() || ptr.GetLeft()==null) &&
+		(ptr.IsParentOfLeft() || ptr.GetLeft()==null))
+        this.Root = caseC(this.Root, ptr);
+ 
+    // Only Left Child
+    else if (ptr.IsParentOfLeft() || ptr.GetLeft()==null)
+		this.Root= caseB(this.Root,  ptr);
+ 
+    // Only Right Child
+    else if ((ptr.IsParentOfLeft() || ptr.GetLeft()==null))
+		this.Root = caseB(this.Root,  ptr);
+ 
+    // No child
+    else
+		this.Root= caseA(this.Root, ptr);
+ 
+    return this.Root;
+}
+
+// Here 'par' is pointer to parent Node and 'ptr' is
+// pointer to current Node.
+BinaryNode<T> caseA(BinaryNode<T> root,BinaryNode<T> ptr)
+{
+    // If Node to be deleted is root
+    if (ptr.GetParent()==null)
+        root = null;
+ 
+    // If Node to be deleted is left
+    // of its parent
+    else if (ptr.IsLeftChild())
+    {
+		ptr.GetParent().SetLeft(ptr.GetLeft());
+    }
+    else
+    {
+        ptr.GetParent().SetRight(ptr.GetRight());
+    }
+ 
+    return root;
+}
+
+// Here 'par' is pointer to parent Node and 'ptr' is
+// pointer to current Node.
+BinaryNode<T> caseB(BinaryNode<T> root,BinaryNode<T> ptr)
+{
+    BinaryNode<T> child;
+ 
+    // Initialize child Node to be deleted has
+    // left child.
+    if (ptr.IsParentOfLeft() || ptr.GetLeft()==null)
+        child = ptr.GetLeft();
+ 
+    // Node to be deleted has right child.
+    else
+        child = ptr.GetRight();
+ 
+    // Node to be deleted is root Node.
+    if (ptr.GetParent()==null)
+        root = child;
+ 
+    // Node is left child of its parent.
+    else if (ptr.IsLeftChild())
+        ptr.GetParent().SetLeft(ptr.GetLeft());
+    else
+		ptr.GetParent().SetRight(ptr.GetRight());
+ 
+    // Find successor and predecessor
+    BinaryNode<T> s = ptr.GetSuccessor();
+    BinaryNode<T> p = ptr.GetPredecessor();
+ 
+    // If ptr has left subtree.
+	if ((ptr.IsParentOfLeft() || ptr.GetLeft()==null) && p!=null)
+	{
+        p.SetRight(s);
+	}
+    // If ptr has right subtree.
+    else
+    {
+		if ((ptr.IsParentOfRight() || ptr.GetRight()==null) && s!=null)
+            s.SetLeft(p);
+	}
+	
+    return root;
+}
+
+BinaryNode<T> caseC(BinaryNode<T> root,BinaryNode<T> ptr)
+{
+    // Find inorder successor and its parent.
+    BinaryNode<T> succ = ptr.GetSuccessor().GetMinium();
+ 
+    ptr.SetInfo(succ.GetInfo());
+ 
+	if ((!succ.IsParentOfLeft() && succ.GetLeft()!=null) && 
+		(!succ.IsParentOfRight() && succ.GetRight()!=null))
+        root = caseA(root, succ);
+    else
+        root = caseB(root, succ);
+ 
+    return root;
+}
+
+
 	public void ReassignPredecessorSuccessor(BinaryNode<T> searchResult,BinaryNode<T> predecessor,BinaryNode<T> successor){
 		
 		if( predecessor!=null && 

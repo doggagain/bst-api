@@ -13,48 +13,48 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class BinaryDataController {
-
+    public final String Url="http://localhost:3000";
     private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
 
     public static BinarySearchTree<Student> Tree;
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/getree")
     public BinaryNodeData GetTree() {
         CheckTree();
         return TreeData();
     }
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/minimum")
     public Student GeMinimum() {
         CheckTree();
         return BinaryDataController.Tree.GetMinimum().GetInfo();
     }
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/maximum")
     public Student GeMaximum() {
         CheckTree();
         return BinaryDataController.Tree.GetMaximum().GetInfo();
     }
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/median")
     public Student GetMedian() {
         CheckTree();
         return BinaryDataController.Tree.GetMedian().GetInfo();
     }
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/size")
     public int GetSize() {
         CheckTree();
         return BinaryDataController.Tree.GetSize();
     }
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/inorder")
     public String[] InorderStart() {
         CheckTree();
@@ -62,7 +62,7 @@ public class BinaryDataController {
     }
 
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/preorder")
     public String[] PreorderStart() {
         CheckTree();
@@ -70,13 +70,13 @@ public class BinaryDataController {
     }
 
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/postorder")
     public String[] PostorderStart() {
         CheckTree();
         return BinaryDataController.Tree.PostorderStart();
     }
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/insertnode/{id}/{name}")
     public BinaryNodeData CreateTree(@PathVariable int id,@PathVariable String name) {
         CheckTree();
@@ -87,7 +87,7 @@ public class BinaryDataController {
         return TreeData();
     }
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/search/{id}")
     public Student SearchTree(@PathVariable int id) {
         CheckTree();
@@ -98,11 +98,11 @@ public class BinaryDataController {
         return node.GetInfo();
     }
 
-    @CrossOrigin(origins="http://localhost:3000")
+    @CrossOrigin(origins=Url)
     @RequestMapping("/delete/{id}")
     public DeleteData Delete(@PathVariable int id) {
         CheckTree();
-        BinaryNode<Student> node=BinaryDataController.Tree.Delete(new Student("name", id));
+        BinaryNode<Student> node=BinaryDataController.Tree.DeleteAmen(new Student("name", id));
         if(node==null){
             return new DeleteData(TreeData(),new Student("No results", -1));
         }
@@ -116,6 +116,14 @@ public class BinaryDataController {
     public void CheckTree(){
         if(BinaryDataController.Tree==null){
             BinaryDataController.Tree=new BinarySearchTree<Student>();
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 10)));
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 5)));
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 15)));
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 12)));
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 11)));
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 13)));
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 17)));
+            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 19)));
         }
     }
 

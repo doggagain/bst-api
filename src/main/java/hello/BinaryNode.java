@@ -126,5 +126,8 @@ public class BinaryNode<T extends HaveKey> extends HaveKey {
 		}
 		return currentRoot;
 	}
-	
+
+	public boolean IsMinimumLeaf(){
+		return this.GetLeft()==null;
+	}
 }

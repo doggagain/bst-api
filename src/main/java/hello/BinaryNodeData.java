@@ -17,7 +17,6 @@ public class BinaryNodeData {
         this.Attributes=attributes;
         this.Children=children;
     }
-
     public BinaryNodeData(){
         
     }
