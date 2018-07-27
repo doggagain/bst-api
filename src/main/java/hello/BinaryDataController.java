@@ -80,10 +80,7 @@ public class BinaryDataController {
     @RequestMapping("/insertnode/{id}/{name}")
     public BinaryNodeData CreateTree(@PathVariable int id,@PathVariable String name) {
         CheckTree();
-        BinaryDataController.Tree.Insert(
-            new BinaryNode<Student>(
-                new Student(name,id)
-            ));
+        BinaryDataController.Tree.Insert(new Student(name,id));
         return TreeData();
     }
 
@@ -91,11 +88,11 @@ public class BinaryDataController {
     @RequestMapping("/search/{id}")
     public Student SearchTree(@PathVariable int id) {
         CheckTree();
-        BinaryNode<Student> node=BinaryDataController.Tree.Search(new Student("name", id));
-        if(node==null){
+        BinaryNode<Student>[] nodes=BinaryDataController.Tree.Search(new Student("name", id));
+        if(nodes==null){
             return new Student("No results", -1);
         }
-        return node.GetInfo();
+        return nodes[1].GetInfo(); //get found node's info
     }
 
     @CrossOrigin(origins=Url)
@@ -116,14 +113,14 @@ public class BinaryDataController {
     public void CheckTree(){
         if(BinaryDataController.Tree==null){
             BinaryDataController.Tree=new BinarySearchTree<Student>();
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 10)));
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 5)));
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 15)));
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 12)));
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 11)));
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 13)));
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 17)));
-            BinaryDataController.Tree.Insert(new BinaryNode<Student>(new Student("a", 19)));
+            BinaryDataController.Tree.Insert((new Student("a", 10)));
+            BinaryDataController.Tree.Insert((new Student("a", 5)));
+            BinaryDataController.Tree.Insert((new Student("a", 15)));
+            BinaryDataController.Tree.Insert((new Student("a", 12)));
+            BinaryDataController.Tree.Insert((new Student("a", 11)));
+            BinaryDataController.Tree.Insert((new Student("a", 13)));
+            BinaryDataController.Tree.Insert((new Student("a", 17)));
+            BinaryDataController.Tree.Insert((new Student("a", 19)));
         }
     }
 

@@ -1,19 +1,31 @@
 package hello;
 public class BinaryNode<T extends HaveKey> extends HaveKey {
-	private BinaryNode<T> Parent;
-	private T Info;
-	private BinaryNode<T> Left;
-	private BinaryNode<T> Right;
+	public BinaryNode<T> Left;
+	public BinaryNode<T> Right;
+	public T Info;
+
+	// True if left pointer points to predecessor
+	// in Inorder Traversal
+	boolean IsLeftThread;
+
+	// True if right pointer points to predecessor
+	// in Inorder Traversal
+	boolean IsRightThread;
 	
-	public BinaryNode(T info,BinaryNode<T> parent,BinaryNode<T> left,BinaryNode<T> right){
+	public BinaryNode(T info,BinaryNode<T> left,BinaryNode<T> right){
 		this.Info=info;
-		this.Parent=parent;
 		this.Left=left;
 		this.Right=right;
 	}
 
 	public BinaryNode(T info){
 		this.Info=info;
+	}
+
+	public BinaryNode(T info,boolean isLeftThread,boolean isRightThread){
+		this.Info=info;
+		this.IsLeftThread=isLeftThread;
+		this.IsRightThread=isRightThread;
 	}
 	
 	public T GetInfo(){
@@ -23,14 +35,7 @@ public class BinaryNode<T extends HaveKey> extends HaveKey {
 	public void SetInfo(T info){
 		this.Info=info;
 	}
-	
-	public BinaryNode<T> GetParent(){
-		return this.Parent;
-	}
-	
-	public void SetParent(BinaryNode<T> parent){
-		this.Parent=parent;
-	}
+
 	
 	public BinaryNode<T> GetLeft(){
 		return this.Left;
@@ -48,49 +53,35 @@ public class BinaryNode<T extends HaveKey> extends HaveKey {
 		this.Right=right;
 	}
 
+	
+	public boolean GetIsLeftThread(){
+		return this.IsLeftThread;
+	}
+	
+	public void SetIsLeftThread(boolean isLeftThread){
+		this.IsLeftThread=isLeftThread;
+	}
+	
+	public boolean GetIsRightThread(){
+		return this.IsRightThread;
+	}
+	
+	public void SetIsRightThread(boolean isRightThread){
+		this.IsRightThread=isRightThread;
+	}
+
 	public int GetKey() {
 		return this.GetInfo().GetKey();
 	}
-	
-	public boolean IsLeaf(){
-		return !
-				((this.Right != null && this.Right.GetParent()==this) || //condition for not being a leaf
-			   (this.Left!= null && this.Left.GetParent()==this)); 
-	}
-	
-	public boolean IsMaximumLeaf(){
-		return this.Right == null;
-	}
-	
-	public boolean IsLeftChild(){
-		if(this.GetParent()==null){
-			return false;
-		}
-		return this.GetParent().GetLeft()==this;
-	}
-	
-	public boolean IsRightChild(){
-		if(this.GetParent()==null){
-			return false;
-		}
-		return this.GetParent().GetRight()==this;
-	}
-	
-	
+
 	public boolean IsParentOfRight(){
-		if(this.Right==null){
-			return false;
-		}
-		return this.Right.GetParent()==this;
+		return this.GetRight()!=null && !this.GetIsRightThread();
 	}
 	
 	public boolean IsParentOfLeft(){
-		if(this.Left==null){
-			return false;
-		}
-		return this.Left.GetParent()==this;
+		return this.GetLeft()!=null && !this.GetIsLeftThread();
 	}
-	
+
 	public  BinaryNode<T> GetPredecessor(){
 		if(!this.IsParentOfLeft()){
 			return this.Left;
@@ -118,6 +109,7 @@ public class BinaryNode<T extends HaveKey> extends HaveKey {
 		}
 		return currentRoot;
 	}
+
 	
 	public BinaryNode<T> GetMaximum(){
 		BinaryNode<T> currentRoot=this;
@@ -126,8 +118,31 @@ public class BinaryNode<T extends HaveKey> extends HaveKey {
 		}
 		return currentRoot;
 	}
+	
+	// Returns inorder successor using left
+// and right children (Used in deletion)
+	// public BinaryNode<T> getSuccessor()
+	// {
+	// 	BinaryNode<T> ptr=this;
+	// 	if (ptr.GetIsRightThread() == true)
+	// 		return ptr.GetRight();
 
-	public boolean IsMinimumLeaf(){
-		return this.GetLeft()==null;
-	}
+	// 	ptr = ptr.GetRight();
+	// 	while (ptr.GetRight()!=null)
+	// 		ptr = ptr.GetRight();
+
+	// 	return ptr;
+	// }
+
+	// public BinaryNode<T> getPredecessor()
+	// {
+	// 	BinaryNode<T> ptr=this;
+	// 	if (ptr.GetIsLeftThread() == true)
+	// 		return ptr.GetLeft();
+
+	// 	ptr = ptr.GetLeft();
+	// 	while (ptr.GetLeft()!=null);
+	// 		ptr = ptr->right;
+	// 	return ptr;
+	// }
 }

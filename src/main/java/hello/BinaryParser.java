@@ -37,7 +37,7 @@ public class BinaryParser {
         BinarySearchTree<Student> tree=new BinarySearchTree<Student>();
 
         for(int i=0;i<students.length;i++){
-            tree.Insert(new BinaryNode<Student>(students[i]));
+            tree.Insert(students[i]);
         }
         return tree;
     }
