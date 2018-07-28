@@ -3,9 +3,9 @@ package hello;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Student extends HaveKey {
-	@JsonProperty("name")
+	@JsonProperty("name") //used for ui
 	public String Name;
-	@JsonProperty("id")
+	@JsonProperty("id") //used for ui
 	public int Id;
 	
 	public Student(String name,int id){
@@ -13,7 +13,7 @@ public class Student extends HaveKey {
 		this.Id=id;
 	}
 
-	public Student(String part){
+	public Student(String part){//used for ui
 		String[] details=part.split("#");
 		this.Id=Integer.parseInt(details[0]);
 		this.Name=details[1];
@@ -37,5 +37,9 @@ public class Student extends HaveKey {
 
 	public int GetKey() {
 		return this.GetId();
+	}
+
+	public String toString(){
+		return "id: "+this.Id+", name: "+this.Name;
 	}
 }
