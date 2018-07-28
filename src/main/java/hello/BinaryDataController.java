@@ -113,14 +113,6 @@ public class BinaryDataController {
     public void CheckTree(){
         if(BinaryDataController.Tree==null){
             BinaryDataController.Tree=new BinarySearchTree<Student>();
-            BinaryDataController.Tree.Insert((new Student("a", 10)));
-            BinaryDataController.Tree.Insert((new Student("b", 5)));
-            BinaryDataController.Tree.Insert((new Student("c", 15)));
-            BinaryDataController.Tree.Insert((new Student("d", 12)));
-            BinaryDataController.Tree.Insert((new Student("e", 11)));
-            BinaryDataController.Tree.Insert((new Student("f", 13)));
-            BinaryDataController.Tree.Insert((new Student("g", 17)));
-            BinaryDataController.Tree.Insert((new Student("h", 19)));
         }
     }
 
