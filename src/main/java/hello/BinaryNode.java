@@ -119,30 +119,4 @@ public class BinaryNode<T extends HaveKey> extends HaveKey {
 		return currentRoot;
 	}
 	
-	// Returns inorder successor using left
-// and right children (Used in deletion)
-	// public BinaryNode<T> getSuccessor()
-	// {
-	// 	BinaryNode<T> ptr=this;
-	// 	if (ptr.GetIsRightThread() == true)
-	// 		return ptr.GetRight();
-
-	// 	ptr = ptr.GetRight();
-	// 	while (ptr.GetRight()!=null)
-	// 		ptr = ptr.GetRight();
-
-	// 	return ptr;
-	// }
-
-	// public BinaryNode<T> getPredecessor()
-	// {
-	// 	BinaryNode<T> ptr=this;
-	// 	if (ptr.GetIsLeftThread() == true)
-	// 		return ptr.GetLeft();
-
-	// 	ptr = ptr.GetLeft();
-	// 	while (ptr.GetLeft()!=null);
-	// 		ptr = ptr->right;
-	// 	return ptr;
-	// }
 }

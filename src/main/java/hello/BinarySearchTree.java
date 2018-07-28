@@ -31,175 +31,179 @@ public class BinarySearchTree<T extends HaveKey> {
 		this.Size--;
 	}
 	
-	BinaryNode<T> Insert(T info)
-	{
-		// Searching for a Node with given value
-		BinaryNode<T> ptr = this.Root;
-		BinaryNode<T> par = null; // Parent of key to be inserted
+	//Get the correct parent for inserted node
+	//input: the info of the to be inserted node
+	//output: the parent of the node to be inserted
+	public BinaryNode<T> GetCorrectParent(T info) {
+		BinaryNode<T> currentNode = this.Root;
+		BinaryNode<T> parent = null; 
 
-		while (ptr != null)
+		while (currentNode != null)
 		{
 			// If key already exists, return
-			if (info.GetKey() == ptr.GetKey())
+			if (info.GetKey() == currentNode.GetKey())
 			{
-				return this.Root;
+				return null;
 			}
 	
-			par = ptr; // Update parent pointer
-	
-			// Moving on left subtree.
-			if (info.GetKey() < ptr.GetKey())
+			parent = currentNode; // Update parentent pointer
+			if (info.GetKey() < currentNode.GetKey()) //go to left tree
 			{
-				if (ptr.GetIsLeftThread() == false)
-					ptr = ptr.GetLeft();
+				if (currentNode.GetIsLeftThread() == false)
+					currentNode = currentNode.GetLeft();
 				else
 					break;
 			}
-	
-			// Moving on right subtree.
-			else
+			else//go to right tree
 			{
-				if (ptr.GetIsRightThread() == false)
-					ptr = ptr.GetRight();
+				if (currentNode.GetIsRightThread() == false)
+					currentNode = currentNode.GetRight();
 				else
 					break;
 			}
 		}
-	
-		// Create a new Node
-		BinaryNode<T> tmp = new BinaryNode<T>(info,true,true);
+		return parent;
+	}
 
-		if (par ==null)
+	//Insert new node to tree
+	//input: the info of the to be inserted node
+	//output: the root of the tree
+	public BinaryNode<T> Insert(T info)
+	{
+		BinaryNode<T> parent=this.GetCorrectParent(info);
+	
+		// init the node to be leaf with nulls as children
+		BinaryNode<T> nodeToInsert = new BinaryNode<T>(info,true,true);
+
+		if (parent ==null)//if the to be inserted node is the root
 		{
-			this.Root = tmp;
-			tmp.SetLeft(null);
-			tmp.SetRight(null);
+			this.Root = nodeToInsert;
+			nodeToInsert.SetLeft(null);
+			nodeToInsert.SetRight(null);
 			this.Median=this.Root.GetInfo();
 			this.Size=1;
 			return this.Root;
 		}
-		else if (info.GetKey() < par.GetKey())
+		else if (info.GetKey() < parent.GetKey()) //if the to be inserted node is a left child
 		{
-			tmp.SetLeft(par.GetLeft());
-			tmp.SetRight(par);
-			par.SetIsLeftThread(false);
-			par.SetLeft(tmp);
+			nodeToInsert.SetLeft(parent.GetLeft());
+			nodeToInsert.SetRight(parent);
+			parent.SetIsLeftThread(false);
+			parent.SetLeft(nodeToInsert);
 		}
-		else
+		else//if the to be inserted node is a right child
 		{
-			tmp.SetLeft(par);
-			tmp.SetRight(par.GetRight());
-			par.SetIsRightThread(false);
-			par.SetRight(tmp);
+			nodeToInsert.SetLeft(parent);
+			nodeToInsert.SetRight(parent.GetRight());
+			parent.SetIsRightThread(false);
+			parent.SetRight(nodeToInsert);
 		}
-		this.UpdateMedianInsert(tmp);
-		this.IncrementSize();
+		this.UpdateMedianInsert(nodeToInsert);//update the median value of the tree
+		this.IncrementSize();//increase the size of the tree
 		return this.Root;
 	}
 
 	
 	
 
-	// Deletes a key from threaded BST with given root and
-// returns new root of BST.
-
-
+	//Delete a node that is present in the tree
+	//input: the info of the to be deleted node
+	//output: the info of the deleted node
 	public T Delete(T info)
 	{
-		//BinaryNode<T> root=this.Root;
-		BinaryNode<T>[] nodes= this.Search(info);
-		if(nodes==null){
-			return null;
+		BinaryNode<T>[] nodes= this.Search(info); //get the to be deleted node and its parent 
+		if(nodes==null){ //if not found then cant delete
+			return null; 
 		}
-		BinaryNode<T> par=nodes[0],ptr=nodes[1];
-		T infoOfFoundNode=ptr.GetInfo();
-		this.UpdateMedianDelete(ptr);
+		BinaryNode<T> parent=nodes[0],currentNode=nodes[1]; //extract nodes
+		T infoOfFoundNode=currentNode.GetInfo(); //get the info of the to be deleted node
+		this.UpdateMedianDelete(currentNode);
 		this.DecrementSize();
-		// Initialize parent as NULL and ptrent
+		// Initialize parentent as NULL and currentNodeent
 		// Node as root.
 		
 		
 		// Two Children
-		if (!ptr.GetIsLeftThread() && !ptr.GetIsRightThread())
-			this.Root= caseC(this.Root,par, ptr);
+		if (!currentNode.GetIsLeftThread() && !currentNode.GetIsRightThread())
+			this.Root= caseC(this.Root,parent, currentNode);
 	
 		// Only Left Child
-		else if (!ptr.GetIsLeftThread())
-			this.Root= caseB(this.Root,par,  ptr);
+		else if (!currentNode.GetIsLeftThread())
+			this.Root= caseB(this.Root,parent,  currentNode);
 	
 		// Only Right Child
-		else if (!ptr.GetIsRightThread())
-			this.Root = caseB(this.Root,par,  ptr);
+		else if (!currentNode.GetIsRightThread())
+			this.Root = caseB(this.Root,parent,  currentNode);
 	
 		// No child
 		else
-			this.Root= caseA(this.Root,par, ptr);
+			this.Root= caseA(this.Root,parent, currentNode);
 	
 		return infoOfFoundNode;
 	}
 
-	// Here 'par' is pointer to parent Node and 'ptr' is
+	// Here 'parent' is pointer to parentent Node and 'currentNode' is
 	// pointer to current Node.
-	public BinaryNode<T> caseA(BinaryNode<T> root,BinaryNode<T> par,BinaryNode<T> ptr)
+	public BinaryNode<T> caseA(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
 	{
 		// If Node to be deleted is root
-		if (par==null)
+		if (parent==null)
 			root = null;
 	
 		// If Node to be deleted is left
-		// of its parent
-		else if (ptr==par.GetLeft())
+		// of its parentent
+		else if (currentNode==parent.GetLeft())
 		{
-			par.SetIsLeftThread(true);
-			par.SetLeft(ptr.GetLeft());
+			parent.SetIsLeftThread(true);
+			parent.SetLeft(currentNode.GetLeft());
 		}
 		else
 		{
-			par.SetIsRightThread(true);
-			par.SetRight(ptr.GetRight());
+			parent.SetIsRightThread(true);
+			parent.SetRight(currentNode.GetRight());
 		}
 	
 		return root;
 	}
 
-	// Here 'par' is pointer to parent Node and 'ptr' is
+	// Here 'parent' is pointer to parentent Node and 'currentNode' is
 	// pointer to current Node.
-	public BinaryNode<T> caseB(BinaryNode<T> root,BinaryNode<T> par,BinaryNode<T> ptr)
+	public BinaryNode<T> caseB(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
 	{
 		BinaryNode<T> child;
 	
 		// Initialize child Node to be deleted has
 		// left child.
-		if (!ptr.GetIsLeftThread())
-			child = ptr.GetLeft();
+		if (!currentNode.GetIsLeftThread())
+			child = currentNode.GetLeft();
 	
 		// Node to be deleted has right child.
 		else
-			child = ptr.GetRight();
+			child = currentNode.GetRight();
 	
 		// Node to be deleted is root Node.
-		if (par==null)
+		if (parent==null)
 			root = child;
 	
-		// Node is left child of its parent.
-		else if (ptr==par.GetLeft())
-			par.SetLeft(child);
+		// Node is left child of its parentent.
+		else if (currentNode==parent.GetLeft())
+			parent.SetLeft(child);
 		else
-			par.SetRight(child);
+			parent.SetRight(child);
 	
 		// Find successor and predecessor
-		BinaryNode<T> s = ptr.GetSuccessor();
-		BinaryNode<T> p = ptr.GetPredecessor();
+		BinaryNode<T> s = currentNode.GetSuccessor();
+		BinaryNode<T> p = currentNode.GetPredecessor();
 	
-		// If ptr has left subtree.
-		if (!ptr.GetIsLeftThread())
+		// If currentNode has left subtree.
+		if (!currentNode.GetIsLeftThread())
 		{
 			p.SetRight(s);
 		}
-		// If ptr has right subtree.
+		// If currentNode has right subtree.
 		else
 		{
-			if (!ptr.GetIsRightThread())
+			if (!currentNode.GetIsRightThread())
 				s.SetLeft(p);
 		}
 		
@@ -208,25 +212,25 @@ public class BinarySearchTree<T extends HaveKey> {
 
 
 
-	public BinaryNode<T> caseC(BinaryNode<T> root,BinaryNode<T> par,BinaryNode<T> ptr)
+	public BinaryNode<T> caseC(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
 	{
-		// Find inorder successor and its parent.
-		BinaryNode<T> parsucc = ptr;
-		BinaryNode<T> succ = ptr.GetRight();
+		// Find inorder successor and its parentent.
+		BinaryNode<T> parentsucc = currentNode;
+		BinaryNode<T> succ = currentNode.GetRight();
 	
 		// // Find leftmost child of successor
 		while (succ.IsParentOfLeft()) //TODO check
 		{
-			parsucc = succ;
+			parentsucc = succ;
 			succ = succ.GetLeft();
 		}
 
-		ptr.SetInfo(succ.GetInfo());
+		currentNode.SetInfo(succ.GetInfo());
 	
 		if (succ.GetIsLeftThread() && succ.GetIsRightThread())
-			root = caseA(root,parsucc, succ);
+			root = caseA(root,parentsucc, succ);
 		else
-			root = caseB(root,parsucc, succ);
+			root = caseB(root,parentsucc, succ);
 	
 		return root;
 	}
@@ -291,32 +295,32 @@ public class BinarySearchTree<T extends HaveKey> {
 	
 	public BinaryNode<T>[] Search(T info){
 		
-		BinaryNode<T> par=null;
-		BinaryNode<T> ptr=this.Root;
+		BinaryNode<T> parent=null;
+		BinaryNode<T> currentNode=this.Root;
 				// Set true if key is found
 		boolean found = false;
 
 		// Search key in BST : find Node and its
-		// parent.
-		while (ptr != null)
+		// parentent.
+		while (currentNode != null)
 		{
-			if (info.GetKey()==ptr.GetKey())
+			if (info.GetKey()==currentNode.GetKey())
 			{
 				found = true;
 				break;
 			}
-			par = ptr;
-			if (info.GetKey() < ptr.GetKey())
+			parent = currentNode;
+			if (info.GetKey() < currentNode.GetKey())
 			{
-				if (!ptr.GetIsLeftThread())
-					ptr = ptr.GetLeft();
+				if (!currentNode.GetIsLeftThread())
+					currentNode = currentNode.GetLeft();
 				else
 					break;
 			}
 			else
 			{
-				if (!ptr.GetIsRightThread())
-					ptr = ptr.GetRight();
+				if (!currentNode.GetIsRightThread())
+					currentNode = currentNode.GetRight();
 				else
 					break;
 			}
@@ -324,8 +328,8 @@ public class BinarySearchTree<T extends HaveKey> {
 
 		if (found){
 			BinaryNode<T>[] arr=(BinaryNode<T>[])new BinaryNode[2];
-			arr[0]=par;
-			arr[1]=ptr;
+			arr[0]=parent;
+			arr[1]=currentNode;
 			return arr;
 		}
 		return null;
