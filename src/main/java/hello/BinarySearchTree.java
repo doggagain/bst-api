@@ -1,10 +1,13 @@
 package hello;
+
+import javax.sound.midi.MidiDevice.Info;
+
 public class BinarySearchTree<T extends HaveKey> {
 	private BinaryNode<T> Root;
 	private int Size;
-	private BinaryNode<T> Median;
+	private T Median;
 	
-	public BinaryNode<T> GetMedian(){
+	public T GetMedian(){
 		return this.Median;
 	}
 	
@@ -71,7 +74,7 @@ public class BinarySearchTree<T extends HaveKey> {
 			this.Root = tmp;
 			tmp.SetLeft(null);
 			tmp.SetRight(null);
-			this.Median=this.Root;
+			this.Median=this.Root.GetInfo();
 			this.Size=1;
 			return this.Root;
 		}
@@ -228,6 +231,8 @@ public class BinarySearchTree<T extends HaveKey> {
 	}
 
 	public void UpdateMedianInsert(BinaryNode<T> node){
+		BinaryNode<T>[] nodes=this.Search(this.Median);
+		BinaryNode<T> medianNode=nodes[1];
 		if(this.Median==null || node==null){
 			return;
 		}
@@ -235,11 +240,13 @@ public class BinarySearchTree<T extends HaveKey> {
 		boolean isSmaller = node.GetKey() < this.Median.GetKey();
 		
 		if(isEven && isSmaller){
-			this.Median=this.Median.GetPredecessor();
+			BinaryNode<T> predecessor=medianNode.GetPredecessor();
+			this.Median=predecessor==null? null: predecessor.GetInfo();
 		}
 		
 		if(!(isEven || isSmaller)){
-			this.Median=this.Median.GetSuccessor();
+			BinaryNode<T> succsessor=medianNode.GetSuccessor();
+			this.Median=succsessor ==null ? null: succsessor.GetInfo();
 		}
 	}
 	
@@ -247,17 +254,21 @@ public class BinarySearchTree<T extends HaveKey> {
 		if(this.Median==null || node==null){
 			return;
 		}
+		BinaryNode<T>[] nodes=this.Search(this.Median);
+		BinaryNode<T> medianNode=nodes[1];
 		boolean isEven=this.Size %2 ==0;
 		boolean isSmaller = node.GetKey() < this.Median.GetKey();
 		boolean isBigger = node.GetKey() > this.Median.GetKey();
 		boolean isSame = !isSmaller && !isBigger;
 		
 		if((!isEven && isSmaller)||(!isEven && isSame)){
-			this.Median=this.Median.GetSuccessor();
+			BinaryNode<T> succsessor=medianNode.GetSuccessor();
+			this.Median=succsessor ==null ? null: succsessor.GetInfo();
 		}
 		
 		if((isEven && isBigger)||(isEven && isSame)){
-			this.Median=this.Median.GetPredecessor();
+			BinaryNode<T> predecessor=medianNode.GetPredecessor();
+			this.Median=predecessor==null? null: predecessor.GetInfo();
 		}
 	}
 	

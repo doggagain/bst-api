@@ -44,7 +44,7 @@ public class BinaryDataController {
     @RequestMapping("/median")
     public Student GetMedian() {
         CheckTree();
-        return BinaryDataController.Tree.GetMedian().GetInfo();
+        return BinaryDataController.Tree.GetMedian();
     }
 
     @CrossOrigin(origins=Url)
