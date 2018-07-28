@@ -131,23 +131,22 @@ public class BinarySearchTree<T extends HaveKey> {
 	
 		
 		if (!currentNode.GetIsLeftThread() && !currentNode.GetIsRightThread()){ //check if has two real children
-			this.Root= applyHasNoChild(this.Root,parent, currentNode);
+			this.Root= applyHasTwoChildren(this.Root, currentNode);
 		}
-		// Only Left Child
 		else if ((!currentNode.GetIsLeftThread()) || //check if has left child or
 				 (!currentNode.GetIsRightThread())){  // check has a right child
 			this.Root= applyHasOneChild(this.Root,parent,  currentNode);
 		}
 		else { //finally has no children
-			this.Root= applyHasTwoChildren(this.Root,parent, currentNode);
+			this.Root= applyHasNoChild(this.Root,parent, currentNode);
 		}
 		return infoOfFoundNode;
 	}
 
-	//Apply handling when the node to delete Has two children
+	//Apply handling when the node to delete Has no child
 	//input: the root, the parent of node to delete and the node to delete
 	//output: the new root of the tree
-	public BinaryNode<T> applyHasTwoChildren(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
+	public BinaryNode<T> applyHasNoChild(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
 	{
 		if (parent==null) // check node to delete is root
 			root = null;
@@ -179,8 +178,9 @@ public class BinarySearchTree<T extends HaveKey> {
 		}
 		else
 		{
-			if (!currentNode.GetIsRightThread()) // check if the left child is real and is subtree
+			if (!currentNode.GetIsRightThread()){ // check if the left child is real and is subtree
 				successor.SetLeft(predecessor); //connect  successor to predecessor with left thread
+			}	
 		}
 		
 	}
@@ -216,11 +216,10 @@ public class BinarySearchTree<T extends HaveKey> {
 	}
 
 
-
-	//Apply handling when the node to delete Has no child
-	//input: the root, the parent of node to delete and the node to delete
+	//Apply handling when the node to delete Has two children
+	//input: the root and the node to delete
 	//output: the new root of the tree
-	public BinaryNode<T> applyHasNoChild(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
+	public BinaryNode<T> applyHasTwoChildren(BinaryNode<T> root,BinaryNode<T> currentNode)
 	{
 		BinaryNode<T>[] successorAndParent=GetSuccessorAndParentOfRightSubtree(currentNode);
 		BinaryNode<T> parentOfTheSuccessor = successorAndParent[0];
@@ -230,7 +229,7 @@ public class BinarySearchTree<T extends HaveKey> {
 												//with the info of the minimum in the right subtree
 		//After switch, apply the correct deletion on the new tree 
 		if (successor.GetIsLeftThread() && successor.GetIsRightThread()) {
-			root = applyHasTwoChildren(root,parentOfTheSuccessor, successor); //to go has two children and update root
+			root = applyHasNoChild(root,parentOfTheSuccessor, successor); //to go has no children and update root
 		}
 		else{
 			root = applyHasOneChild(root,parentOfTheSuccessor, successor);//to go has one child and update root
