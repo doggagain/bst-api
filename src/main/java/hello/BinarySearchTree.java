@@ -80,22 +80,22 @@ public class BinarySearchTree<T extends HaveKey> {
 			this.Root = nodeToInsert;
 			nodeToInsert.SetLeft(null);
 			nodeToInsert.SetRight(null);
-			this.Median=this.Root.GetInfo();
+			this.Median=this.Root.GetInfo(); //set median and size to initialize them
 			this.Size=1;
 			return this.Root;
 		}
 		else if (info.GetKey() < parent.GetKey()) //if the to be inserted node is a left child
 		{
 			nodeToInsert.SetLeft(parent.GetLeft());
-			nodeToInsert.SetRight(parent);
-			parent.SetIsLeftThread(false);
+			nodeToInsert.SetRight(parent); //thread to parent
+			parent.SetIsLeftThread(false); //parent has a real child on the left
 			parent.SetLeft(nodeToInsert);
 		}
 		else//if the to be inserted node is a right child
 		{
-			nodeToInsert.SetLeft(parent);
+			nodeToInsert.SetLeft(parent); //thread to parent
 			nodeToInsert.SetRight(parent.GetRight());
-			parent.SetIsRightThread(false);
+			parent.SetIsRightThread(false); //parent has a real child on the tight
 			parent.SetRight(nodeToInsert);
 		}
 		this.UpdateMedianInsert(nodeToInsert);//update the median value of the tree
@@ -117,124 +117,141 @@ public class BinarySearchTree<T extends HaveKey> {
 		}
 		BinaryNode<T> parent=nodes[0],currentNode=nodes[1]; //extract nodes
 		T infoOfFoundNode=currentNode.GetInfo(); //get the info of the to be deleted node
-		this.UpdateMedianDelete(currentNode);
-		this.DecrementSize();
-		// Initialize parentent as NULL and currentNodeent
-		// Node as root.
-		
-		
-		// Two Children
-		if (!currentNode.GetIsLeftThread() && !currentNode.GetIsRightThread())
-			this.Root= caseC(this.Root,parent, currentNode);
+		this.UpdateMedianDelete(currentNode);//update the median value of the tree
+		this.DecrementSize();//decrease the size of the tree
 	
+		
+		if (!currentNode.GetIsLeftThread() && !currentNode.GetIsRightThread()){ //check if has two real children
+			this.Root= applyHasNoChild(this.Root,parent, currentNode);
+		}
 		// Only Left Child
-		else if (!currentNode.GetIsLeftThread())
-			this.Root= caseB(this.Root,parent,  currentNode);
-	
-		// Only Right Child
-		else if (!currentNode.GetIsRightThread())
-			this.Root = caseB(this.Root,parent,  currentNode);
-	
-		// No child
-		else
-			this.Root= caseA(this.Root,parent, currentNode);
-	
+		else if ((!currentNode.GetIsLeftThread()) || //check if has left child or
+				 (!currentNode.GetIsRightThread())){  // check has a right child
+			this.Root= applyHasOneChild(this.Root,parent,  currentNode);
+		}
+		else { //finally has no children
+			this.Root= applyHasTwoChildren(this.Root,parent, currentNode);
+		}
 		return infoOfFoundNode;
 	}
 
-	// Here 'parent' is pointer to parentent Node and 'currentNode' is
-	// pointer to current Node.
-	public BinaryNode<T> caseA(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
+	//Apply handling when the node to delete Has two children
+	//input: the root, the parent of node to delete and the node to delete
+	//output: the new root of the tree
+	public BinaryNode<T> applyHasTwoChildren(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
 	{
-		// If Node to be deleted is root
-		if (parent==null)
+		if (parent==null) // check node to delete is root
 			root = null;
 	
-		// If Node to be deleted is left
-		// of its parentent
-		else if (currentNode==parent.GetLeft())
+		else if (currentNode==parent.GetLeft()) //check if the node is a left child
 		{
-			parent.SetIsLeftThread(true);
-			parent.SetLeft(currentNode.GetLeft());
+			parent.SetIsLeftThread(true);    //then the child is left thread
+			parent.SetLeft(currentNode.GetLeft()); //set the new child of parent to the nodes child
 		}
 		else
 		{
-			parent.SetIsRightThread(true);
-			parent.SetRight(currentNode.GetRight());
+			parent.SetIsRightThread(true); //then the child is right thread
+			parent.SetRight(currentNode.GetRight());//set the new child of parent to the nodes child
 		}
 	
 		return root;
 	}
-
-	// Here 'parent' is pointer to parentent Node and 'currentNode' is
-	// pointer to current Node.
-	public BinaryNode<T> caseB(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
-	{
-		BinaryNode<T> child;
+	//apply reassignments to the successor and predecessor of the node to delete
+	//input:  the node to delete
+	//output: none
+	public void ReassignSuccessorPredecessor(BinaryNode<T> currentNode){
+		BinaryNode<T> successor = currentNode.GetSuccessor(); // get successor and predecessor of the node to delete
+		BinaryNode<T> predecessor = currentNode.GetPredecessor();
 	
-		// Initialize child Node to be deleted has
-		// left child.
-		if (!currentNode.GetIsLeftThread())
-			child = currentNode.GetLeft();
-	
-		// Node to be deleted has right child.
-		else
-			child = currentNode.GetRight();
-	
-		// Node to be deleted is root Node.
-		if (parent==null)
-			root = child;
-	
-		// Node is left child of its parentent.
-		else if (currentNode==parent.GetLeft())
-			parent.SetLeft(child);
-		else
-			parent.SetRight(child);
-	
-		// Find successor and predecessor
-		BinaryNode<T> s = currentNode.GetSuccessor();
-		BinaryNode<T> p = currentNode.GetPredecessor();
-	
-		// If currentNode has left subtree.
-		if (!currentNode.GetIsLeftThread())
+		
+		if (!currentNode.GetIsLeftThread()) // check if the left child is real and is subtree
 		{
-			p.SetRight(s);
+			predecessor.SetRight(successor); //connect  predecessor to successor with right thread
 		}
-		// If currentNode has right subtree.
 		else
 		{
-			if (!currentNode.GetIsRightThread())
-				s.SetLeft(p);
+			if (!currentNode.GetIsRightThread()) // check if the left child is real and is subtree
+				successor.SetLeft(predecessor); //connect  successor to predecessor with left thread
 		}
 		
-		return root;
 	}
 
-
-
-	public BinaryNode<T> caseC(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
+	//Apply handling when the node to delete Has one child
+	//input: the root, the parent of node to delete and the node to delete
+	//output: the new root of the tree
+	public BinaryNode<T> applyHasOneChild(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
 	{
-		// Find inorder successor and its parentent.
-		BinaryNode<T> parentsucc = currentNode;
-		BinaryNode<T> succ = currentNode.GetRight();
+		BinaryNode<T> child; //hold a reference to the child
 	
-		// // Find leftmost child of successor
-		while (succ.IsParentOfLeft()) //TODO check
-		{
-			parentsucc = succ;
-			succ = succ.GetLeft();
+	
+		if (!currentNode.GetIsLeftThread()){ //if the left child is not a thread then the child is the left
+			child = currentNode.GetLeft();
+		}
+		else{				//else go to right child
+			child = currentNode.GetRight();
 		}
 
-		currentNode.SetInfo(succ.GetInfo());
-	
-		if (succ.GetIsLeftThread() && succ.GetIsRightThread())
-			root = caseA(root,parentsucc, succ);
-		else
-			root = caseB(root,parentsucc, succ);
-	
+		if (parent==null){ // check node to delete is root
+			root = child;
+		}
+		else if (currentNode==parent.GetLeft()){ // check if the node is a left or a right child
+			parent.SetLeft(child);
+		}
+		else{
+			parent.SetRight(child);
+		}
+
+		ReassignSuccessorPredecessor(currentNode);
+
 		return root;
 	}
 
+
+
+	//Apply handling when the node to delete Has no child
+	//input: the root, the parent of node to delete and the node to delete
+	//output: the new root of the tree
+	public BinaryNode<T> applyHasNoChild(BinaryNode<T> root,BinaryNode<T> parent,BinaryNode<T> currentNode)
+	{
+		BinaryNode<T>[] successorAndParent=GetSuccessorAndParentOfRightSubtree(currentNode);
+		BinaryNode<T> parentOfTheSuccessor = successorAndParent[0];
+		BinaryNode<T> successor = successorAndParent[1];
+
+		currentNode.SetInfo(successor.GetInfo()); //switch the info of node to delete 
+												//with the info of the minimum in the right subtree
+		//After switch, apply the correct deletion on the new tree 
+		if (successor.GetIsLeftThread() && successor.GetIsRightThread()) {
+			root = applyHasTwoChildren(root,parentOfTheSuccessor, successor); //to go has two children and update root
+		}
+		else{
+			root = applyHasOneChild(root,parentOfTheSuccessor, successor);//to go has one child and update root
+		}
+		return root;
+	}
+
+	//Get the minimum value in right sutree and its parent
+	//input: the node to delete
+	//output: the minimum value in right sutree and its parent
+	public BinaryNode<T>[] GetSuccessorAndParentOfRightSubtree(BinaryNode<T> currentNode){
+		BinaryNode<T> parentOfTheSuccessor = currentNode; // hold reference to parent of the right node, 
+													    //which is the root of the right subtree
+		BinaryNode<T> successor = currentNode.GetRight(); //the root of the right subtree
+	
+		while (successor.IsParentOfLeft()) //get the minimum value in right sutree, while updating parent
+		{
+			parentOfTheSuccessor = successor;
+			successor = successor.GetLeft();
+		}
+
+		BinaryNode<T>[] successorAndParent=(BinaryNode<T>[])new BinaryNode[2]; //return the pair
+		successorAndParent[0]=parentOfTheSuccessor;
+		successorAndParent[1]=successor;
+		return successorAndParent;
+	}
+
+	//Update the median with its correct predecessor or succsessor, if needed
+	//input: the root, the parent of node to delete and the node to delete
+	//output: the new root of the tree
 	public void UpdateMedianInsert(BinaryNode<T> node){
 		BinaryNode<T>[] nodes=this.Search(this.Median);
 		BinaryNode<T> medianNode=nodes[1];
