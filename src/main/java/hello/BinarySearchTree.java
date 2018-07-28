@@ -249,12 +249,14 @@ public class BinarySearchTree<T extends HaveKey> {
 		}
 		boolean isEven=this.Size %2 ==0;
 		boolean isSmaller = node.GetKey() < this.Median.GetKey();
+		boolean isBigger = node.GetKey() > this.Median.GetKey();
+		boolean isSame = !isSmaller && !isBigger;
 		
-		if(!isEven && isSmaller){
+		if((!isEven && isSmaller)||(!isEven && isSame)){
 			this.Median=this.Median.GetSuccessor();
 		}
 		
-		if(isEven && !isSmaller){
+		if((isEven && isBigger)||(isEven && isSame)){
 			this.Median=this.Median.GetPredecessor();
 		}
 	}
