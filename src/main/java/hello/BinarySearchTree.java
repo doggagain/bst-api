@@ -6,27 +6,36 @@ public class BinarySearchTree<T extends HaveKey> {
 	private BinaryNode<T> Root;
 	private int Size;
 	private T Median;
-	
+
+	//Get Median of the tree
+	//input: none
+	//output: Median of the tree
 	public T GetMedian(){
 		return this.Median;
 	}
-	
+	//Get Root of the tree
+	//input: none
+	//output: Root of the tree
 	public BinaryNode<T> GetRoot(){
 		return this.Root;
 	}
 	
-	public void SetRoot(BinaryNode<T> root){
-		this.Root=root;
-	}
-	
+	//Get Size of the tree
+	//input: none
+	//output: Size of the tree
 	public int GetSize(){
 		return this.Size;
 	}
 	
+	//InrementSize of the tree
+	//input: none
+	//output: none
 	public void IncrementSize(){
 		this.Size++;
 	}
-	
+	//DecrementSize of the tree
+	//input: none
+	//output: none
 	public void DecrementSize(){
 		this.Size--;
 	}
@@ -250,161 +259,196 @@ public class BinarySearchTree<T extends HaveKey> {
 	}
 
 	//Update the median with its correct predecessor or succsessor, if needed
-	//input: the root, the parent of node to delete and the node to delete
-	//output: the new root of the tree
+	//input: the node to be inserted
+	//output: none
 	public void UpdateMedianInsert(BinaryNode<T> node){
-		BinaryNode<T>[] nodes=this.Search(this.Median);
-		BinaryNode<T> medianNode=nodes[1];
-		if(this.Median==null || node==null){
-			return;
-		}
-		boolean isEven=this.Size %2 ==0;
-		boolean isSmaller = node.GetKey() < this.Median.GetKey();
+		BinaryNode<T>[] medianAndParent=this.Search(this.Median); //find the medain and parent
+		BinaryNode<T> medianNode=medianAndParent[1]; //get the medain
 		
-		if(isEven && isSmaller){
+		boolean isEven=this.Size %2 ==0; //check if tree size is even
+		boolean isSmaller = node.GetKey() < this.Median.GetKey(); //check if the inserted is smaller than median 
+		
+		if(isEven && isSmaller){  // if tree size is even and the inserted value is smaller then the new median
+									//is the predecessor 
 			BinaryNode<T> predecessor=medianNode.GetPredecessor();
 			this.Median=predecessor==null? null: predecessor.GetInfo();
 		}
 		
-		if(!(isEven || isSmaller)){
+		if(!(isEven || isSmaller)){ // if tree size is odd and the median is smaller then the new median
+									//or equal then  the new median is the succsessor 
 			BinaryNode<T> succsessor=medianNode.GetSuccessor();
 			this.Median=succsessor ==null ? null: succsessor.GetInfo();
 		}
 	}
-	
+	//Update the median with its correct predecessor or succsessor, if needed
+	//input: the node to be deleted
+	//output: none
 	public void UpdateMedianDelete(BinaryNode<T> node){
-		if(this.Median==null || node==null){
+		if(this.Median==null || node==null){ //check if the median or the node is null
 			return;
 		}
-		BinaryNode<T>[] nodes=this.Search(this.Median);
-		BinaryNode<T> medianNode=nodes[1];
-		boolean isEven=this.Size %2 ==0;
+		BinaryNode<T>[] medianAndParent=this.Search(this.Median); //find the medain and parent
+		BinaryNode<T> medianNode=medianAndParent[1]; //get the median
+		boolean isEven=this.Size %2 ==0; //check if tree size is even
 		boolean isSmaller = node.GetKey() < this.Median.GetKey();
 		boolean isBigger = node.GetKey() > this.Median.GetKey();
 		boolean isSame = !isSmaller && !isBigger;
 		
 		if((!isEven && isSmaller)||(!isEven && isSame)){
+			// if tree size is odd and the inserted value is smaller or equal then the new median
+			//is the succsessor 
 			BinaryNode<T> succsessor=medianNode.GetSuccessor();
 			this.Median=succsessor ==null ? null: succsessor.GetInfo();
 		}
 		
 		if((isEven && isBigger)||(isEven && isSame)){
+			// if tree size is even and the inserted value is bigger or equal then the new median
+			//is the predecessor 
 			BinaryNode<T> predecessor=medianNode.GetPredecessor();
 			this.Median=predecessor==null? null: predecessor.GetInfo();
 		}
 	}
 	
+	//Get Minimum of tree
+	//input: none
+	//output: Minimum of tree
 	public BinaryNode<T> GetMinimum(){
 		return this.Root.GetMinium();
 	}
 	
+	//GetMaximum of tree
+	//input: none
+	//output: Maximum of tree
 	public BinaryNode<T> GetMaximum(){
 		return this.Root.GetMaximum();
 	}
 	
+	//GetPredecessor of node in the tree
+	//input: node in the tree
+	//output: Predecessor of node in the tree 
 	public  BinaryNode<T> GetPredecessor(BinaryNode<T> node){
 		return node.GetPredecessor();
 	}
 	
+	//GetSuccessor of node in the tree
+	//input: node in the tree
+	//output: Successor of node in the tree
 	public  BinaryNode<T> GetSuccessor(BinaryNode<T> node){
 		return node.GetSuccessor();
 	}
 	
+	
+	//Search for node in the tree and its parent
+	//input: info of the node
+	//output: node in the tree and its parent
 	public BinaryNode<T>[] Search(T info){
 		
-		BinaryNode<T> parent=null;
-		BinaryNode<T> currentNode=this.Root;
-				// Set true if key is found
-		boolean found = false;
+		BinaryNode<T> parent=null; //hold parent 
+		BinaryNode<T> currentNode=this.Root; //begin at root
+		boolean isFound = false; //
 
-		// Search key in BST : find Node and its
-		// parentent.
 		while (currentNode != null)
 		{
-			if (info.GetKey()==currentNode.GetKey())
+			if (info.GetKey()==currentNode.GetKey()) //value was found, so search stops
 			{
-				found = true;
+				isFound = true;
 				break;
 			}
-			parent = currentNode;
-			if (info.GetKey() < currentNode.GetKey())
+			parent = currentNode; //update parent 
+			if (info.GetKey() < currentNode.GetKey())  //check if needs to go to left or right subtree
 			{
-				if (!currentNode.GetIsLeftThread())
-					currentNode = currentNode.GetLeft();
+				if (!currentNode.GetIsLeftThread()) //check if not a thread
+					currentNode = currentNode.GetLeft(); //goes to left subtree
 				else
-					break;
+					break; //thread reached with no value
 			}
 			else
 			{
-				if (!currentNode.GetIsRightThread())
-					currentNode = currentNode.GetRight();
+				if (!currentNode.GetIsRightThread()) //check if not a thread
+					currentNode = currentNode.GetRight();  //goes to right subtree
 				else
-					break;
+					break;//thread reached with no value
 			}
 		}
 
-		if (found){
-			BinaryNode<T>[] arr=(BinaryNode<T>[])new BinaryNode[2];
-			arr[0]=parent;
-			arr[1]=currentNode;
-			return arr;
+		if (isFound){ //if found return the pair
+			BinaryNode<T>[] nodeAndParent=(BinaryNode<T>[])new BinaryNode[2];
+			nodeAndParent[0]=parent;
+			nodeAndParent[1]=currentNode;
+			return nodeAndParent;
 		}
-		return null;
+		return null; //wasnt found
 	}
 
+	//return the inorder of the nodes of the tree
+	//input: none
+	//output: inorder of the nodes of the tree
 	public String[] InorderStart(){
-		String[] keys=new String[this.Size];
-		int[] index={0};
-		Inorder(this.Root,keys,index);
+		String[] keys=new String[this.Size]; //create a array of the node values
+		int[] index={0}; //hold the index of next insertion
+		Inorder(this.Root,keys,index); 
 		return keys;
 	}
 
+	//Create the inorder of the nodes of the tree
+	//input: the node to check to insert to array, the array of values to return and the index for next insertion
+	//output: none
 	public void Inorder(BinaryNode<T> node,String[] keys,int[] index){
-		if(node.IsParentOfLeft()){
+		if(node.IsParentOfLeft()){ //check should go left subtree
 			Inorder(node.GetLeft(),keys,index);
 		}
-		keys[index[0]]=String.valueOf(node.GetKey());
+		keys[index[0]]=String.valueOf(node.GetKey()); //put the node value to array
 		index[0]++;
-		if(node.IsParentOfRight()){
+		if(node.IsParentOfRight()){//check should go right subtree
 			Inorder(node.GetRight(),keys,index);
 		}
 	}
 
-	
+	//return the Preorder of the nodes of the tree
+	//input: none
+	//output: Preorder of the nodes of the tree
 	public String[] PreorderStart(){
-		String[] keys=new String[this.Size];
-		int[] index={0};
+		String[] keys=new String[this.Size];//create a array of the node values
+		int[] index={0}; //hold the index of next insertion
 		Preorder(this.Root,keys,index);
 		return keys;
 	}
 
+	//Create the Preorder of the nodes of the tree
+	//input: the node to check to insert to array, the array of values to return and the index for next insertion
+	//output: none
 	public void Preorder(BinaryNode<T> node,String[] keys,int[] index){
-		keys[index[0]]=String.valueOf(node.GetKey());
+		keys[index[0]]=String.valueOf(node.GetKey()); //put the node value to array
 		index[0]++;
-		if(node.IsParentOfLeft()){
+		if(node.IsParentOfLeft()){ //check should go left subtree
 			Preorder(node.GetLeft(),keys,index);
 		}
-		if(node.IsParentOfRight()){
+		if(node.IsParentOfRight()){//check should go right subtree
 			Preorder(node.GetRight(),keys,index);
 		}
 	}
 
-	
+	//return the Postorder of the nodes of the tree
+	//input: none
+	//output: Postorder of the nodes of the tree
 	public String[] PostorderStart(){
-		String[] keys=new String[this.Size];
-		int[] index={0};
+		String[] keys=new String[this.Size];//create a array of the node values
+		int[] index={0};//hold the index of next insertion
 		Postorder(this.Root,keys,index);
 		return keys;
 	}	
 
+	//Create the Postorder of the nodes of the tree
+	//input: the node to check to insert to array, the array of values to return and the index for next insertion
+	//output: none
 	public void Postorder(BinaryNode<T> node,String[] keys,int[] index){
-		if(node.IsParentOfLeft()){
+		if(node.IsParentOfLeft()){//check should go left subtree
 			Postorder(node.GetLeft(),keys,index);
 		}
-		if(node.IsParentOfRight()){
+		if(node.IsParentOfRight()){//check should go right subtree
 			Postorder(node.GetRight(),keys,index);
 		}
-		keys[index[0]]=String.valueOf(node.GetKey());
+		keys[index[0]]=String.valueOf(node.GetKey());//put the node value to array
 		index[0]++;
 	}
 }
