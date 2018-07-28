@@ -99,11 +99,11 @@ public class BinaryDataController {
     @RequestMapping("/delete/{id}")
     public DeleteData Delete(@PathVariable int id) {
         CheckTree();
-        BinaryNode<Student> node=BinaryDataController.Tree.DeleteAmen(new Student("name", id));
-        if(node==null){
+        Student info=BinaryDataController.Tree.Delete(new Student("name", id));
+        if(info==null){
             return new DeleteData(TreeData(),new Student("No results", -1));
         }
-        return new DeleteData(TreeData(),node.GetInfo());
+        return new DeleteData(TreeData(),info);
     }
 
     public BinaryNodeData TreeData(){
@@ -114,13 +114,13 @@ public class BinaryDataController {
         if(BinaryDataController.Tree==null){
             BinaryDataController.Tree=new BinarySearchTree<Student>();
             BinaryDataController.Tree.Insert((new Student("a", 10)));
-            BinaryDataController.Tree.Insert((new Student("a", 5)));
-            BinaryDataController.Tree.Insert((new Student("a", 15)));
-            BinaryDataController.Tree.Insert((new Student("a", 12)));
-            BinaryDataController.Tree.Insert((new Student("a", 11)));
-            BinaryDataController.Tree.Insert((new Student("a", 13)));
-            BinaryDataController.Tree.Insert((new Student("a", 17)));
-            BinaryDataController.Tree.Insert((new Student("a", 19)));
+            BinaryDataController.Tree.Insert((new Student("b", 5)));
+            BinaryDataController.Tree.Insert((new Student("c", 15)));
+            BinaryDataController.Tree.Insert((new Student("d", 12)));
+            BinaryDataController.Tree.Insert((new Student("e", 11)));
+            BinaryDataController.Tree.Insert((new Student("f", 13)));
+            BinaryDataController.Tree.Insert((new Student("g", 17)));
+            BinaryDataController.Tree.Insert((new Student("h", 19)));
         }
     }
 

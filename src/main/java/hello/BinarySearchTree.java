@@ -104,7 +104,7 @@ public class BinarySearchTree<T extends HaveKey> {
 // returns new root of BST.
 
 
-	public BinaryNode<T> DeleteAmen(T info)
+	public T Delete(T info)
 	{
 		//BinaryNode<T> root=this.Root;
 		BinaryNode<T>[] nodes= this.Search(info);
@@ -112,6 +112,7 @@ public class BinarySearchTree<T extends HaveKey> {
 			return null;
 		}
 		BinaryNode<T> par=nodes[0],ptr=nodes[1];
+		T infoOfFoundNode=ptr.GetInfo();
 		this.UpdateMedianDelete(ptr);
 		this.DecrementSize();
 		// Initialize parent as NULL and ptrent
@@ -134,7 +135,7 @@ public class BinarySearchTree<T extends HaveKey> {
 		else
 			this.Root= caseA(this.Root,par, ptr);
 	
-		return this.Root;
+		return infoOfFoundNode;
 	}
 
 	// Here 'par' is pointer to parent Node and 'ptr' is
